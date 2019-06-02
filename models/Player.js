@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 
 var PlayerSchema = new Schema({
     playerName: {type: String},
-    currentLocation: {type: Schema.Types.ObjectId, ref: "Location" },
+    currentSS: {type: Schema.Types.ObjectId, ref: "SolarSystem"},
+    currentPlanet: {type: Schema.Types.ObjectId, ref: "Planet"},
     ship: {type: Schema.Types.ObjectId, ref: "Ship"},
     currency: {type: Number}
 })

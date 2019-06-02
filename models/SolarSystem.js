@@ -24,8 +24,7 @@ SolarSystemSchema.methods.setDistanceFromOrigin = function(coord){
 
 
 SolarSystemSchema.methods.setNumOfPlanets = function(){
-    this.numOfPlanets = Math.floor(Math.random() * 15 - 4)
-    if (this.numOfPlanets < 0) {this.numOfPlanets = 0}
+    this.numOfPlanets = Math.floor(Math.random() * 10 + 1)
     return this.numOfPlanets
 }
 
