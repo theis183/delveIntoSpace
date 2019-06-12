@@ -11,7 +11,7 @@ var SolarSystemSchema = new Schema({
     numOfPlanets: {type:Number}
 })
 
-SolarSystemSchema.methods.setCoord = async function(galaxySize){
+SolarSystemSchema.methods.setCoord = function(galaxySize){
     this.coord = Array.from({length: 3}, () => Math.random() * galaxySize * 2 - galaxySize)
     return this.coord
 }
@@ -26,6 +26,12 @@ SolarSystemSchema.methods.setDistanceFromOrigin = function(coord){
 SolarSystemSchema.methods.setNumOfPlanets = function(){
     this.numOfPlanets = Math.floor(Math.random() * 10 + 1)
     return this.numOfPlanets
+}
+
+SolarSystemSchema.methods.initSolarSystem = function(galaxySize){
+    this.setCoord(galaxySize)
+    this.setNumOfPlanets()
+    this.setDistanceFromOrigin(this.coord)
 }
 
 var SolarSystem = mongoose.model("SolarSystem", SolarSystemSchema)

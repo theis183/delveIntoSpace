@@ -213,6 +213,14 @@ StarSchema.methods.setTemp = function(starType) {
     return this.temp
 }
 
+StarSchema.methods.initStar = function(){
+    this.setStarType()
+    this.setSpectralType(this.starType)
+    this.setLuminosity(this.starType)
+    this.setMass(this.starType)
+    this.setTemp(this.starType)
+}
+
 
 var Star = mongoose.model("Star", StarSchema)
 

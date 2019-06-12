@@ -1,14 +1,22 @@
 var db = require("../models");
 
+function createArtifact(dbPlanet, dbSolarSystem){
+    var artifact = new db.Artifact
+    artifact.initArtifact(dbSolarSystem.distanceFromOrigin)
+    db.Artifact.create(artifact)
+        .then(function(dbArtifact){
+            return db.Planet.findOneAndUpdate({'_id': dbPlanet._id}, {'$push': {artifacts: dbArtifact._id}}, {new: true})
+        })
+}
+
 function createPlanet(dbSolarSystem, dbStar) {
     var planet = new db.Planet
-    planet.setCoordLoc()
-    planet.setDistanceFromStar(planet.coordLoc)
-    planet.setPlanetTemp(planet.distanceFromStar, dbStar.temp)
-    planet.setPlanetType(planet.planetTemp)
+    planet.initPlanet(dbStar.temp, dbSolarSystem.distanceFromOrigin)
     db.Planet.create(planet)
         .then(function (dbPlanet) {
-            console.log(dbPlanet)
+            for(var i = 0; i < dbPlanet.numOfArtifacts; i++){
+                createArtifact(dbPlanet, dbSolarSystem)
+            }
             return db.SolarSystem.findOneAndUpdate({ '_id': dbSolarSystem._id }, { '$push': { planets: dbPlanet._id } }, { new: true })
         })
 }
@@ -23,26 +31,17 @@ module.exports = function (app) {
         var sizeOfGalaxy = parseFloat(req.params.sizeOfGalaxy)
         for (var i = 0; i < numberOfSystems; i++) {
             var solarSystem = new db.SolarSystem
-            solarSystem.setCoord(sizeOfGalaxy)
-            solarSystem.setNumOfPlanets()
-            solarSystem.setDistanceFromOrigin(solarSystem.coord)
-            db.SolarSystem.create(solarSystem).then(function(dbSolarSystem){
+            solarSystem.initSolarSystem(sizeOfGalaxy)
+            db.SolarSystem.create(solarSystem).then(function (dbSolarSystem) {
                 var star = new db.Star
-                star.setStarType()
-                star.setSpectralType(star.starType)
-                star.setLuminosity(star.starType)
-                star.setMass(star.starType)
-                star.setTemp(star.starType)
-                db.Star.create(star).then(function(dbStar){
-                    console.log(dbStar)
+                star.initStar()
+                db.Star.create(star).then(function (dbStar) {
                     for (var j = 0; j < dbSolarSystem.numOfPlanets; j++) { createPlanet(dbSolarSystem, dbStar) }
                     return db.SolarSystem.findOneAndUpdate({ '_id': dbSolarSystem._id }, { '$set': { star: dbStar._id } }, { new: true })
-                    
-                }).then(function(){
+                }).then(function () {
                     res.json(dbSolarSystem)
                 })
             })
-
-}
+        }
     })
 }

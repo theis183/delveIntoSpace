@@ -7,7 +7,10 @@ var PlanetSchema = new Schema({
     coordLoc: [],
     distanceFromStar: {type: Number},
     planetTemp: {type:Number},
-    planetType: {type: String}
+    planetType: {type: String},
+    numOfArtifacts: {type: Number},
+    artifacts: [{type: Schema.Types.ObjectId, ref: "Artifact"}]
+
 })
 
 PlanetSchema.methods.setCoordLoc = function(){
@@ -26,13 +29,50 @@ PlanetSchema.methods.setDistanceFromStar = function(coordLoc){
 }
 
 PlanetSchema.methods.setPlanetType = function(planetTemp){
-    if(planetTemp > 2) {this.planetType = "Terran Volcanic"}
-    else if (planetTemp > 1.1) {this.planetType = "Terran Dessert"}
-    else if (planetTemp > .90) {this.planetType = "Terran Water"}
-    else if (planetTemp > .75) {this.planetType = "Terran Ice"}
-    else if (planetTemp > .15) {this.planetType = "Gas Giant"}
-    else {this.planetType = "Heavy Gas Giant"}
+    console.log(planetTemp)
+    if(planetTemp < .15) {this.planetType = "Heavy Gas Giant"}
+    else if (planetTemp < .75) {this.planetType = "Gas Giant"}
+    else if (planetTemp < .90) {this.planetType = "Terran Ice"}
+    else if (planetTemp < 1.2) {this.planetType = "Terran Water"}
+    else if (planetTemp < 2) {this.planetType = "Terran Dessert"}
+    else {this.planetType = "Terran Volcanic"}
+    return this.planetType
+}
 
+PlanetSchema.methods.setNumOfArtifacts = function(distanceFromOrigin, planetType){
+    const rand = Math.random() * Math.sqrt(distanceFromOrigin)
+    console.log("*************")
+    console.log(rand)
+    switch(planetType){
+        case "Terran Volcanic":
+            this.numOfArtifacts = Math.floor(rand * 1.1)
+            break;
+        case "Terran Dessert":
+            this.numOfArtifacts = Math.floor(rand * 2.25)
+            break;
+        case "Terran Water":
+            this.numOfArtifacts = Math.floor(rand * 10)
+            break;
+        case "Terran Ice":
+            this.numOfArtifacts = Math.floor(rand * 5.5)
+            break;
+        case "Gas Giant":
+            this.numOfArtifacts = 0
+            break;
+        case "Heavy Gas Giant":
+            this.numOfArtifacts = 0
+            break;
+    }
+return this.numOfArtifacts
+
+}
+
+PlanetSchema.methods.initPlanet = function(starTemp, distanceFromOrigin){
+    this.setCoordLoc()
+    this.setDistanceFromStar(this.coordLoc)
+    this.setPlanetTemp(this.distanceFromStar, starTemp)
+    this.setPlanetType(this.planetTemp)
+    this.setNumOfArtifacts(distanceFromOrigin, this.planetType)
 }
 
 var Planet = mongoose.model("Planet", PlanetSchema)
