@@ -9,7 +9,9 @@ var PlanetSchema = new Schema({
     planetTemp: {type:Number},
     planetType: {type: String},
     numOfArtifacts: {type: Number},
-    artifacts: [{type: Schema.Types.ObjectId, ref: "Artifact"}]
+    artifacts: [{type: Schema.Types.ObjectId, ref: "Artifact"}], 
+    numOfStations: {type: Number},
+    stations: [{type: Schema.Types.ObjectId, ref: "Station"}]
 
 })
 
@@ -64,7 +66,11 @@ PlanetSchema.methods.setNumOfArtifacts = function(distanceFromOrigin, planetType
             break;
     }
 return this.numOfArtifacts
+}
 
+PlanetSchema.methods.setNumOfStations = function (distanceFromOrigin){
+    this.numOfStations = Math.floor((Math.sqrt(250/ Math.sqrt(1 + distanceFromOrigin)) * Math.random()))
+    return this.numOfStations
 }
 
 PlanetSchema.methods.initPlanet = function(starTemp, distanceFromOrigin){
@@ -73,6 +79,7 @@ PlanetSchema.methods.initPlanet = function(starTemp, distanceFromOrigin){
     this.setPlanetTemp(this.distanceFromStar, starTemp)
     this.setPlanetType(this.planetTemp)
     this.setNumOfArtifacts(distanceFromOrigin, this.planetType)
+    this.setNumOfStations(distanceFromOrigin)
 }
 
 var Planet = mongoose.model("Planet", PlanetSchema)

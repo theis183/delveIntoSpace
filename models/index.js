@@ -6,6 +6,7 @@ module.exports = {
     Star: require("./Star"),
     Player: require("./Player"),
     Ship: require('./Ship'),
-    Artifact: require('./Artifact')
+    Artifact: require('./Artifact'),
+    Station: require('./Station')
   };
   

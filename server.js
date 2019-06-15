@@ -23,7 +23,7 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/galaxy", { useNewUrlParser: true });
 
-db.SolarSystem.create({coord: [0,0,0] })
+/* db.SolarSystem.create({coord: [0,0,0] })
   .then(function(dbSolarSystem) {
     // If saved successfully, print the new SolarSystem document to the console
     console.log(dbSolarSystem);
@@ -31,7 +31,7 @@ db.SolarSystem.create({coord: [0,0,0] })
   .catch(function(err) {
     // If an error occurs, print it to the console
     console.log(err.message);
-  });
+  }); */
 
 require("./routes/serverInit")(app)
 require("./routes/playerInit")(app)

@@ -9,6 +9,15 @@ function createArtifact(dbPlanet, dbSolarSystem){
         })
 }
 
+function createStation(dbPlanet, dbSolarSystem){
+    var station = new db.Station
+    station.initStation(dbSolarSystem.distanceFromOrigin)
+    db.Station.create(station)
+    .then(function(dbStation){
+        return db.Planet.findOneAndUpdate({'_id': dbPlanet._id}, {'$push': {stations: dbStation._id}}, {new: true})
+    })
+}
+
 function createPlanet(dbSolarSystem, dbStar) {
     var planet = new db.Planet
     planet.initPlanet(dbStar.temp, dbSolarSystem.distanceFromOrigin)
@@ -16,6 +25,9 @@ function createPlanet(dbSolarSystem, dbStar) {
         .then(function (dbPlanet) {
             for(var i = 0; i < dbPlanet.numOfArtifacts; i++){
                 createArtifact(dbPlanet, dbSolarSystem)
+            }
+            for (var i = 0; i < dbPlanet.numOfStations; i++){
+                createStation(dbPlanet, dbSolarSystem)
             }
             return db.SolarSystem.findOneAndUpdate({ '_id': dbSolarSystem._id }, { '$push': { planets: dbPlanet._id } }, { new: true })
         })
